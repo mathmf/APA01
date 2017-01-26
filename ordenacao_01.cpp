@@ -51,14 +51,12 @@ int main( int argc, char* argv[] )
             //insertion sort
 
         {
-        for(i=1;i<n-1;i++){
-            j = i;
-            while((j>0) &&(a[j-1]>a[j])){
-                temp = a[j];
-                a[j] = a[j-1];
-                a[j-1] = temp;
-                j = j-1;
+        for(j=1;j < n ;j++){
+            temp = a[j];
+            for(i=j-1;i>=0 && a[i]>temp;i--){
+                a[i+1]= a[i];
             }
+            a[i+1] = temp;
         }
         break;
         }

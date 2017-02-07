@@ -1,4 +1,6 @@
 import java.util.Scanner;
+import java.util.Arrays;
+
 
 /**
  *
@@ -10,8 +12,9 @@ public class ordenacao {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        int i, j,n,temp;
+        int i, j,k,n,temp;
 		long startT,endT;
+		int min,max;
 		double total;
         Scanner sc = new Scanner(System.in);
         n = sc.nextInt();
@@ -63,6 +66,54 @@ public class ordenacao {
             case 5: //HeapSort
                 HeapSort(a,n-1);
                 break;
+			
+			case 6://java library
+				Arrays.sort(a);
+				break;
+			case 7:{//Counting Sort
+				max = getMaxValue(a);
+				min = getMinValue(a);
+				int[] count = new int [(max-min)+1];
+				CopyArray(a,0,n,b);
+				for(i=0;i<((max-min)+1);i++){
+					count[i] = 0;
+				}
+				for(i = 0;i<n;i++){
+					count[b[i]-min]++;
+				}
+				for(i = 1;i<((max-min)+1);i++){
+					count[i] += count[i-1];
+				}
+				for (i = 0; i<n; ++i)
+				{
+				a[count[b[i]-min]-1] = b[i];
+				--count[b[i]-min];
+				}
+				break;
+			}
+			case 8:{//Bucket Sort
+				max = getMaxValue(a);
+				min = getMinValue(a);
+				int[] bucket = new int [(max-min)+1];
+				CopyArray(a,0,n,b);
+				for(i=0;i<((max-min)+1);i++){
+					bucket[i] = 0;
+				}
+				for(i = 0;i<n;i++){
+					bucket[a[i]-min]++;
+				}
+				i=0;
+				for(k = 0;k<((max-min)+1);k++){
+					for(j = 0;j<bucket[k];j++)
+						a[i++] = k + min;
+				}
+				break;
+			}
+			case 9://radix sort
+				max = getMaxValue(a);
+				for (i = 1; max/i > 0; i *= 10)
+					countSort(a, n, i);
+				break;				
         }
 		endT = System.currentTimeMillis();
 		total = (endT - startT);
@@ -70,7 +121,7 @@ public class ordenacao {
         for(i = 0;i<n;i++){
             System.out.println(a[i]);
         }
-		System.out.printf("%.2f",total);
+		//System.out.printf("%.2f",total);
     }
     
     public static void Split(int[] b, int iBegin,int iEnd,int[] a){
@@ -171,5 +222,71 @@ public class ordenacao {
             n = n-1;
             maxheap(a,0,n);
         }
+    }
+
+	public static int getMaxValue(int[] array) {
+    int maxValue = array[0];
+    for (int i = 1; i < array.length; i++) {
+        if (array[i] > maxValue) {
+            maxValue = array[i];
+        }
+    }
+    return maxValue;
+	}
+	
+	public static int getMinValue(int[] array) {
+    int minValue = array[0];
+    for (int i = 1; i < array.length; i++) {
+        if (array[i] < minValue) {
+            minValue = array[i];
+        }
+    }
+    return minValue;
+	}
+	
+	static void countSort(int arr[], int n, int exp)
+    {
+        int output[] = new int[n]; 
+        int i;
+        int count[] = new int[20];
+        Arrays.fill(count,0);
+ 
+        for (i = 0; i < n; i++){
+			if(arr[i]>0)
+				count[ (arr[i]/exp)%10 + 10 ]++;            
+		    else{
+				if((arr[i]/exp)%10 == 0)
+					count[9]++;
+				else
+					count[(arr[i]/exp)%10 + 10]++;
+			}
+		}			
+				
+        
+        for (i = 1; i < 20; i++)
+            count[i] += count[i - 1];
+		
+        for (i = n - 1; i >= 0; i--)
+        {
+			if(arr[i]>0){
+				output[count[ (arr[i]/exp)%10 + 10] - 1] = arr[i];  
+				count[ (arr[i]/exp)%10 + 10 ]--;
+			}				
+		    else{
+				if((arr[i]/exp)%10 == 0){
+					output[count[ 9 ] - 1] = arr[i];
+					count[ 9 ]--;
+				}					
+				else{
+					output[count[ (arr[i]/exp)%10 + 10 ] - 1] = arr[i];
+					count[(arr[i]/exp)%10 + 10]--;
+				}
+					
+			}
+			
+        }
+ 
+        for (i = 0; i < n; i++)
+            arr[i] = output[i];
     }
 }
